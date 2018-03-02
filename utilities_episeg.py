@@ -193,15 +193,16 @@ def ready_data(path_to_data, path_to_label, mode):
 
     '''
     
-    data_file = path_to_data
-    print(mode + " data is in file : " + data_file)
-    
+   
+    print(mode + " data is in file : " + path_to_data)
+    print(mode + " labels are in file : " + path_to_label)
 
     print('setting up data dictionary...')
     processed_data = {}
     processed_data['X_data'] = np.load(path_to_data)
     processed_data['Y_data'] = np.load(path_to_label)
- 
+    processed_data['mode'] = mode
+
     print(processed_data['X_data'].shape)
     print(processed_data['Y_data'].shape)
 
