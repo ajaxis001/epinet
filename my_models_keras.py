@@ -5,7 +5,7 @@ Created on Thu Mar  1 23:20:28 2018
 @author: akn36d
 """
 
-from kearas.models import Model
+from keras.models import Model
 from keras.layers import Input, merge, Conv2D, MaxPooling2D, UpSampling2D, Dropout, Cropping2D
 
 
