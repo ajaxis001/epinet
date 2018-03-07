@@ -20,7 +20,7 @@ from keras.callbacks import CSVLogger, EarlyStopping, ModelCheckpoint
 from keras.utils import to_categorical, normalize
 
 from utilities_episeg import *
-from my_models_keras import epinet_model1_cnn
+from Models.unet_model1 import epinet_model1_cnn
 
 
 # Setting the random number generator so that the results are reproducible
@@ -121,7 +121,7 @@ for idx in range(number_of_batches):
     
     
     # Declaring the model
-    my_model = epinet_model1_cnn(img_rows=img_rows,
+    my_model = unet_model1(img_rows=img_rows,
                                  img_cols=img_cols,
                                  img_channels=img_channels)
     epinet = my_model.get_model()
