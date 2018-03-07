@@ -34,7 +34,7 @@ dirname = os.path.dirname(__file__)
 
 # Suite Name and directory declaration (The place where all the info for a given run of a model will be stored)
 # MAKE DYNAMIC
-models_folder = 'Models'
+models_folder = 'Model_runs'
 makefolder_ifnotexists(os.path.join(dirname, 
                                     models_folder))
 
