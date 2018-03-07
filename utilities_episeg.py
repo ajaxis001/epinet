@@ -7,7 +7,9 @@ import os
 import sys
 import warnings
 
-import glob2 as glob
+# import glob2 as glob
+import glob as glob
+
 import numpy as np
 import matplotlib.pyplot as plt  
 
@@ -22,14 +24,15 @@ def makefolder_ifnotexists(foldername):
 '''-------------------------------------------------------------------------------------------
 '''
 def create_patch_arr(img, patch_rows,patch_cols,patch_step):
-
+    
+    # If any dimension of patch bigger than image dimension throw error
     img_rows, img_cols, img_channels = np.shape(img) # size of image
     assert (img_rows > patch_rows), "Patch row size greater than image row size"
     assert (img_rows > patch_rows), "Patch col size greater than image col size"
     warnings.warn ("Step size too big along image rows i.e. patch_rows + patch_step > img_rows") 
     warnings.warn("Step size too big along image cols i.e. patch_cols + patch_step > img_cols")
     
-    # If any dimension of patch bigger than image dimension throw error
+    
     
     # Loop to generate image and corresponding mask patches
     # run loop as long as patches dont overstep the image boundaries along height or the width of the image
@@ -199,7 +202,6 @@ def ready_data(path_to_data, path_to_label, mode):
 
     '''
     
-   
     print(mode + " data is in file : " + path_to_data)
     print(mode + " labels are in file : " + path_to_label)
 
