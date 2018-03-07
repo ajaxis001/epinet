@@ -6,9 +6,7 @@ Created on Thu Mar  1 23:20:28 2018
 """
 
 from keras.models import Model
-from keras.layers import Input, merge, Conv2D, MaxPooling2D, UpSampling2D, Dropout, Cropping2D
-
-
+from keras.layers import Input, merge, Conv2D, MaxPooling2D, UpSampling2D, Dropout, Reshape, Flatten
 
 
 ###############################################################################
@@ -18,7 +16,8 @@ class epinet_model1_cnn():
     def __init__(self, img_rows = 50, img_cols = 50, img_channels = 3):
         self.img_rows = img_rows
         self.img_cols = img_cols
-        self.img_channels - img_channels
+        self.img_channels = img_channels
+        self.name = 'epinet_model1_cnn'
         
     # Ref: http://lmb.informatik.uni-freiburg.de/people/ronneber/u-net/
     def get_model(self): 
@@ -244,11 +243,15 @@ class epinet_model1_cnn():
         # Final Output                             
         conv9 = Conv2D(filters=1,
                        kernel_size=1,
-                       activation='relu',
+                       activation='sigmoid',
                        padding='same',
                        kernel_initializer='he_normal')(conv9)
+
+        # This last upsampling and reshaping is an addition by me to match with my training label/mask size
+        up10 = UpSampling2D(size=(2,2))(conv9)
+        final_op = up10
         # ---------------------------------------------------------------------
 
-        model = Model(input=inpt, output=conv9)
+        model = Model(input=inpt, output=final_op)
 
         return model
