@@ -7,10 +7,11 @@ Created on Thu Mar  1 21:30:18 2018
 
 import os
 import sys
-# import glob2 as glob
-import glob as glob
-
+import glob2 as glob
+#import glob as glob
+import re
 import pprint
+
 import numpy as np
 import matplotlib.pyplot as plt  
 
@@ -55,11 +56,15 @@ training_batch_img_folder = os.path.join('Train_batches','images_'+ str(patch_ro
 training_batch_label_folder = os.path.join('Train_batches','labels_'+ str(patch_rows) + '_' + str(patch_step) + '_*' ) 
 
 
-# Number of batches of training data
-tr_data_batches = glob.glob(os.path.join(dirname, training_batch_img_folder, '*.npy'))
-tr_label_batches = glob.glob(os.path.join(dirname, training_batch_label_folder, '*.npy'))
-# pprint.pprint(tr_data_batches)
-# pprint.pprint(tr_label_batches)
+# The batches of training data
+batch_number = re.compile(r'\d\d')
+tr_data_batches = sorted(value=glob.glob(os.path.join(dirname, training_batch_img_folder, '*.npy')), 
+                         key=int(batch_number))
+tr_label_batches = sorted(value=glob.glob(os.path.join(dirname, training_batch_label_folder, '*.npy')),
+                          key=int(batch_number))
+pprint.pprint(tr_data_batches)
+pprint.pprint(tr_label_batches)
+quit()
 
 # Parameters
 loss='binary_crossentropy'
