@@ -120,7 +120,6 @@ for idx in range(number_of_batches):
     print('X_data.shape : ' , X_data.shape)
     print('y_data.shape : ' , y_data.shape)
 
-    quit()
     # Splitting training data into training and validation data (stratified cross validation)
     val_per = 0.20 # ratio of training data to be taken for validation
     X_train, X_val = train_test_split(X_data,
