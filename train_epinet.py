@@ -112,7 +112,11 @@ for idx in range(number_of_batches):
     num_of_tr_imgs, img_rows, img_cols, img_channels = X_data.shape
 
     y_data = train_data_labels['Y_data'] > 0 # (converting  data  to -> 0 to 1)
-        
+    
+    print('X_data.shape : ' , X_data.shape)
+    print('y_data.shape : ' , y_data.shape)
+
+    quit()
     # Splitting training data into training and validation data (stratified cross validation)
     val_per = 0.20 # ratio of training data to be taken for validation
     X_train, X_val = train_test_split(X_data,
