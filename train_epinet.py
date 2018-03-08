@@ -7,8 +7,8 @@ Created on Thu Mar  1 21:30:18 2018
 
 import os
 import sys
-import glob2 as glob
-#import glob as glob
+#import glob2 as glob
+import glob as glob
 import re
 import pprint
 
