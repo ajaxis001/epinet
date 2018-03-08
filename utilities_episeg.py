@@ -22,16 +22,6 @@ def makefolder_ifnotexists(foldername):
         os.makedirs(foldername)
 
 
-
-'''-------------------------------------------------------------------------------------------
-'''
-def numericalSort(value):
-    reg_exp = re.compile(r'\d+')
-    parts = reg_exp.split(value)
-    parts[1::4] = map(int, parts[1::4])
-    return parts
-
-
 '''-------------------------------------------------------------------------------------------
 '''
 def create_patch_arr(img, patch_rows,patch_cols,patch_step):
