@@ -20,7 +20,7 @@ from keras.callbacks import CSVLogger, EarlyStopping, ModelCheckpoint
 from keras.utils import to_categorical, normalize
 
 from utilities_episeg import *
-from Models.unet_model1 import epinet_model1_cnn
+from Models.unet_model1 import *
 
 
 # Setting the random number generator so that the results are reproducible
@@ -108,7 +108,7 @@ for idx in range(number_of_batches):
     X_data = train_data_labels['X_data']
     num_of_tr_imgs, img_rows, img_cols, img_channels = X_data.shape
 
-    y_data = train_data_labels['Y_data'] > 0 # (converting from 0 to 255 -> 0 to 1)
+    y_data = train_data_labels['Y_data'] > 0 # (converting  data  to -> 0 to 1)
         
     # Splitting training data into training and validation data (stratified cross validation)
     val_per = 0.20 # ratio of training data to be taken for validation
