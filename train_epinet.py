@@ -63,7 +63,7 @@ tr_label_batches = sorted(glob.glob(os.path.join(dirname, training_batch_label_f
                           key=os.path.getmtime)
 pprint.pprint(tr_data_batches)
 pprint.pprint(tr_label_batches)
-quit()
+
 
 # Parameters
 loss='binary_crossentropy'
