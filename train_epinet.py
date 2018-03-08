@@ -89,6 +89,8 @@ makefolder_ifnotexists(os.path.join(dirname,models_folder,suite_dirname ,save_we
 number_of_batches = len(tr_data_batches) 
          
 mode = 'train'
+save_weights_full_path = ''
+log_full_path = ''
 # test training using a single trdata and trlabel npy files 
 for idx in range(number_of_batches): 
     
