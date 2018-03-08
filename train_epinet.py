@@ -63,9 +63,9 @@ def numericalSort(value):
     parts[1::4] = map(int, parts[1::4])
     return parts
 
-tr_data_batches = sorted(value=glob.glob(os.path.join(dirname, training_batch_img_folder, '*.npy')), 
+tr_data_batches = sorted(glob.glob(os.path.join(dirname, training_batch_img_folder, '*.npy')), 
                          key=numericalSort)
-tr_label_batches = sorted(value=glob.glob(os.path.join(dirname, training_batch_label_folder, '*.npy')),
+tr_label_batches = sorted(glob.glob(os.path.join(dirname, training_batch_label_folder, '*.npy')),
                           key=numericalSort)
 pprint.pprint(tr_data_batches)
 pprint.pprint(tr_label_batches)
