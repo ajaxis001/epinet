@@ -60,7 +60,6 @@ training_batch_label_folder = os.path.join('Train_batches','labels_'+ str(patch_
 def numericalSort(value):
     reg_exp = re.compile(r'\d+')
     parts = reg_exp.split(value)
-    parts[1::4] = map(int, parts[1::4])
     return parts
 
 tr_data_batches = sorted(glob.glob(os.path.join(dirname, training_batch_img_folder, '*.npy')), 
