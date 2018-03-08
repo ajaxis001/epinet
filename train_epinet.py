@@ -38,8 +38,8 @@ models_folder = 'Model_runs'
 makefolder_ifnotexists(os.path.join(dirname, 
                                     models_folder))
 
-suite_dirname = 'model1_suite1'
-suite_dirname = input('\nEnter name for this run of model: ')
+suite_dirname = 'model1_run1'
+# suite_dirname = input('\nEnter name for this run of model: ')
 makefolder_ifnotexists(os.path.join(dirname, 
                                     models_folder, 
                                     suite_dirname))
