@@ -31,7 +31,7 @@ random_state = 42
 
 # get directory script resides in
 dirname = os.path.dirname(__file__)
-
+print(dirname)
 # Suite Name and directory declaration (The place where all the info for a given run of a model will be stored)
 # MAKE DYNAMIC
 models_folder = 'Model_runs'
@@ -51,8 +51,8 @@ patch_step = 100 # The number of pixels between start of one patch and the start
 
 
 # Setting folders to load the batches of .npy files that will be used
-training_batch_img_folder = os.path.join('Train_batches','images_'+ str(patch_rows) + '_' + str(patch_step)) 
-training_batch_label_folder = os.path.join('Train_batches','labels_'+ str(patch_rows) + '_' + str(patch_step)) 
+training_batch_img_folder = os.path.join('Train_batches','images_'+ str(patch_rows) + '_' + str(patch_step) + '_*') 
+training_batch_label_folder = os.path.join('Train_batches','labels_'+ str(patch_rows) + '_' + str(patch_step) + '_*' ) 
 
 
 # Number of batches of training data
@@ -87,7 +87,8 @@ makefolder_ifnotexists(os.path.join(dirname,models_folder,suite_dirname ,save_we
 
 # Number of batches we split our patches of images into
 number_of_batches = len(tr_data_batches) 
-         
+print('number_of_batches : ', number_of_batches)   
+
 mode = 'train'
 save_weights_full_path = ''
 log_full_path = ''
