@@ -58,9 +58,9 @@ training_batch_label_folder = os.path.join('Train_batches','labels_'+ str(patch_
 
 # The batches of training data
 tr_data_batches = sorted(value=glob.glob(os.path.join(dirname, training_batch_img_folder, '*.npy')), 
-                         key=numericalSort)
+                         key=utilities_episeg.numericalSort)
 tr_label_batches = sorted(value=glob.glob(os.path.join(dirname, training_batch_label_folder, '*.npy')),
-                          key=numericalSort)
+                          key=utilities_episeg.numericalSort)
 pprint.pprint(tr_data_batches)
 pprint.pprint(tr_label_batches)
 quit()
