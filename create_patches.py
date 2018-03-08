@@ -13,8 +13,8 @@ will be too big and will give out of memory errors.
 
 import os
 import sys
-import glob2 as glob
-
+# import glob2 as glob
+import glob as glob
 
 import pprint
 import numpy as np
@@ -34,10 +34,11 @@ patch_rows = 256
 patch_cols = 256
 patch_step = 100 # sets the number of pixels between start of one patch and the start of the succeeding patch
 
+number_of_batches = 50
 
 # Setting folders to store the batches of .npy files that will be generated
-training_batch_img_folder = os.path.join('Train_batches','images_'+ str(patch_rows) + '_' + str(patch_step)) 
-training_batch_label_folder = os.path.join('Train_batches','labels_'+ str(patch_rows) + '_' + str(patch_step)) 
+training_batch_img_folder = os.path.join('Train_batches','images_'+ str(patch_rows) + '_' + str(patch_step) + '_' + str(number_of_batches)) 
+training_batch_label_folder = os.path.join('Train_batches','labels_'+ str(patch_rows) + '_' + str(patch_step) +  '_' + str(number_of_batches)) 
 
 # make the folders if they dont exist 
 makefolder_ifnotexists(training_batch_img_folder)
@@ -49,7 +50,6 @@ print(training_batch_img_folder)
 print(training_batch_label_folder)
 
 
-number_of_batches = 10
 img_extension = 'tif'
 
 batch_patchCreateSave(path_raw_img, path_masks,
