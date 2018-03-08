@@ -6,7 +6,7 @@ Created on Sat Feb 24 15:00:19 2018
 import os
 import sys
 import warnings
-
+import re
 # import glob2 as glob
 import glob as glob
 
@@ -20,6 +20,17 @@ from skimage import io
 def makefolder_ifnotexists(foldername):
     if not os.path.exists(foldername):
         os.makedirs(foldername)
+
+
+
+'''-------------------------------------------------------------------------------------------
+'''
+def numericalSort(foldername):
+    reg_exp = re.compile(r'\d+')
+    parts = reg_exp.split(foldername)
+    parts[1::4] = map(int, parts[1::4])
+    return parts
+
 
 '''-------------------------------------------------------------------------------------------
 '''
@@ -178,29 +189,30 @@ def batch_patchCreateSave(path_raw_img,path_masks,training_batch_img_folder, tra
 
 
 
+'''--------------------------------------------------------------------------------------------
+Function takes in the parameters given below and readies the data to be input to given into the 
+model of desire
+
+    params :
+    path_to_data - a str object to the path of stored batches of data image file patches
+        e.g. folder1/folder2/train_data.npy
+    path_to_label - astr object to path of stored batches of label file patches
+        e.g. folder1/folder2/train_labels.npy
+    
+    
+    mode - a string which specifies if data is training data of test data
+    Can be 'test' or 'train'
+
+    returns :
+    processed_data - a dictionaty with the processed and readied data
+                     has the following labels,
+                     X_data     : the trainig data 
+                     Y_data     : the labels for the data (only available when mode='train')
+                     mode       : the mode with which the function was called in 
+
+'''
+
 def ready_data(path_to_data, path_to_label, mode):
-    '''
-    Function takes in the parameters given below and readies the data to be input to given into the 
-    model of desire
-
-        params :
-        path_to_data - a str object to the path of stored batches of data image file patches
-            e.g. folder1/folder2/train_data.npy
-        path_to_label - astr object to path of stored batches of label file patches
-            e.g. folder1/folder2/train_labels.npy
-        
-        
-        mode - a string which specifies if data is training data of test data
-        Can be 'test' or 'train'
-
-        returns :
-        processed_data - a dictionaty with the processed and readied data
-                         has the following labels,
-                         X_data     : the trainig data 
-                         Y_data     : the labels for the data (only available when mode='train')
-                         mode       : the mode with which the function was called in 
-
-    '''
     
     print(mode + " data is in file : " + path_to_data)
     print(mode + " labels are in file : " + path_to_label)
