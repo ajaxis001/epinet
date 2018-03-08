@@ -20,7 +20,7 @@ from sklearn.model_selection import train_test_split
 from keras.callbacks import CSVLogger, EarlyStopping, ModelCheckpoint
 from keras.utils import to_categorical, normalize
 
-from utilities_episeg import *
+from utilities_episeg import *, numericalSort
 from Models.unet_model1 import *
 
 
@@ -58,9 +58,9 @@ training_batch_label_folder = os.path.join('Train_batches','labels_'+ str(patch_
 
 # The batches of training data
 tr_data_batches = sorted(value=glob.glob(os.path.join(dirname, training_batch_img_folder, '*.npy')), 
-                         key=utilities_episeg.numericalSort)
+                         key=numericalSort)
 tr_label_batches = sorted(value=glob.glob(os.path.join(dirname, training_batch_label_folder, '*.npy')),
-                          key=utilities_episeg.numericalSort)
+                          key=numericalSort)
 pprint.pprint(tr_data_batches)
 pprint.pprint(tr_label_batches)
 quit()
