@@ -34,7 +34,7 @@ patch_rows = 256
 patch_cols = 256
 patch_step = 100 # sets the number of pixels between start of one patch and the start of the succeeding patch
 
-number_of_batches = 25
+number_of_batches = 15
 
 # Setting folders to store the batches of .npy files that will be generated
 training_batch_img_folder = os.path.join('Train_batches','images_'+ str(patch_rows) + '_' + str(patch_step) + '_' + str(number_of_batches)) 
