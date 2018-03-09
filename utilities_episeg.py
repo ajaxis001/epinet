@@ -12,6 +12,7 @@ import glob as glob
 
 import numpy as np
 import matplotlib.pyplot as plt  
+import random 
 
 from skimage import io
 
@@ -106,12 +107,15 @@ NOTE:
     3. Labels can only be single channel images
 
 INPUTS:
-path_raw_img,
-path_masks,
-training_batch_img_folder, 
-training_batch_label_folder, 
-patch_rows, patch_cols, 
-patch_step, 
+path_raw_img - path to the images 
+path_masks - path to masks
+training_batch_img_folder - Location to store the data patch batches 
+training_batch_label_folder - Location to store the mask/label patch batches 
+patch_rows - number of rows  in patch
+patch_cols - number of columns in patch
+patch_step - steps to take inbetween patches
+img_extension - can be 'tif', 'jpg', 'png' or other formats compatible with scikit-images 'io' module
+ 
 img_extension - can be 'tif', 'jpg', 'png' or other formats compatible with scikit-images 'io' module
         
 OUTPUTS:
@@ -176,6 +180,115 @@ def batch_patchCreateSave(path_raw_img,path_masks,training_batch_img_folder, tra
        
         np.save(os.path.join( training_batch_img_folder ,'tr_data_batch_' + str(idx) + '.npy'), epi_patch_arr)
         np.save(os.path.join(training_batch_label_folder ,'tr_label_batch_'+ str(idx) +  '.npy'), mask_patch_arr)
+
+
+
+'''-------------------------------------------------------------------------------------------
+Description :
+The function is used to create batches from the given training data images and corresponding label data images.
+These will be then saved in the folders with names as follows:
+    batch_name =      'tr_data(or label)_batch_' + str(batch_number)+ '.npy' 
+
+This is a better version of the above batch_patchCreateSave(). This randomizes the patches 
+in each batch, which serves better for training. 
+
+NOTE:
+1. Make sure your np.seed() is set to a value at top of code before you use this function,
+otherwise the data patches and mask patches will be shuffled in different ways.
+    
+2. For this function make sure your label images are named as :
+    label_image_name = name_of_corresponding_image + '_mask' + extension
+    
+    where extension could be formats compatible with scikit-images 'io' module e.g.:
+        'jpeg'
+        'tif'
+        'png' etc.
+        
+3. All Training images need to be of the same format
+
+4. Labels can only be single channel images
+
+INPUTS:
+path_raw_img - path to the images 
+path_masks - path to masks
+training_batch_img_folder - Location to store the data patch batches 
+training_batch_label_folder - Location to store the mask/label patch batches 
+patch_rows - number of rows  in patch
+patch_cols - number of columns in patch
+patch_step - steps to take inbetween patches
+img_extension - can be 'tif', 'jpg', 'png' or other formats compatible with scikit-images 'io' module
+        
+OUTPUTS:
+
+        
+''' 
+def batch_patchCreateSave_v2(path_raw_img,path_masks,training_batch_img_folder, training_batch_label_folder, number_of_batches ,patch_rows, patch_cols, patch_step, img_extension):
+        
+    # List out the images in folder/ path
+    img_files = glob.glob(os.path.join(path_raw_img,'*.' + img_extension))
+    random.shuffle(img_files)
+        
+    mask_suffix = '_mask' # add extension to image name to get corresponding mask file name
+    
+              
+    _,_,img_channels = np.shape(io.imread(img_files[0])) # Getting number of channels in training images
+    
+    # init first patches because we dont know what the number of patches for a single batch is going to be,
+    # this is done specially for the last patch array as mod(number of images, number of batches) might not be equal to 0 
+    epi_patch_arr = np.empty((1,patch_rows,patch_cols,img_channels))
+    mask_patch_arr = np.empty((1,patch_rows,patch_cols, 1))
+    
+    for idx_i in range(len(img_files)):
+        print('\tCreating patches for image number : ' + str(idx_i))
+        # Storing image into a numpy array
+        img = io.imread(img_files[idx_i])
+      
+        _ , mask_file = os.path.split(img_files[idx_i])
+        mask_name , _ = os.path.splitext(mask_file)
+        mask_file = os.path.join( path_masks,mask_name + mask_suffix + '.' + img_extension)
+        mask = io.imread(mask_file)
+    
+        mask = mask[...,np.newaxis] # adding an extra dimension, along which we will concatenate the mask patches
+        
+        if mask is None:
+            print('\nErr 0 : Corresponding mask file missing.\n')
+        # print(img_files[idx])
+        # print(mask_file + '\n')
+        # img_arr = io.imread('imagetest.jpg')
+        # print(type(img_arr)) #: <class 'numpy.ndarray'>
+        # io.imshow(img_arr) # disp imge
+        
+        data_patches = create_patch_arr(img, patch_rows,patch_cols,patch_step)
+        mask_patches = create_patch_arr(mask, patch_rows,patch_cols,patch_step)
+        
+        epi_patch_arr = np.concatenate((epi_patch_arr,data_patches), axis = 0)
+        mask_patch_arr = np.concatenate((mask_patch_arr,mask_patches), axis = 0)
+        
+    # Removing the the very first patch which was just used for initializing the dynamically increasing patch arrays
+    epi_patch_arr = epi_patch_arr[1:,...] 
+    np.random.shuffle(epi_patch_arr)
+
+    mask_patch_arr = mask_patch_arr[1:,...]
+    np.random.shuffle(mask_patch_arr)
+
+    print('Train data shape : ' , str(epi_patch_arr.shape))
+    print('Train labels shape : ' , str(mask_patch_arr.shape))   
+
+
+    # Number of patches in a single batch
+    num_patches_in_batch = int(epi_patch_arr.shape[0]/number_of_batches)
+
+    for idx in np.r_[0 : epi_patch_arr.shape[0] : number_of_batches]:
+        print('\nProcessing batch ' + str(idx) + ' of ' + str(number_of_batches-1))
+
+        epi_patch_batch = epi_patch_arr[idx:idx+num_patches_in_batch]
+        mask_patch_batch = mask_patch_arr[idx:idx+num_patches_in_batch]
+
+        print('\tSize of current data batch : ', str(epi_patch_batch.shape))
+        print('\tSize of current mask batch : ', str(mask_patch_batch.shape))
+
+        np.save(os.path.join( training_batch_img_folder ,'tr_data_batch_' + str(idx) + '.npy'), epi_patch_batch)
+        np.save(os.path.join(training_batch_label_folder ,'tr_label_batch_'+ str(idx) +  '.npy'), mask_patch_batch)
 
 
 
