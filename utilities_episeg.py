@@ -217,12 +217,12 @@ patch_rows - number of rows  in patch
 patch_cols - number of columns in patch
 patch_step - steps to take inbetween patches
 img_extension - can be 'tif', 'jpg', 'png' or other formats compatible with scikit-images 'io' module
-        
+val_per - a portion of the data will  be stored as validation data (it will be saved in a different folder with same name but with the suffix '_val')        
 OUTPUTS:
 
         
 ''' 
-def batch_patchCreateSave_v2(path_raw_img,path_masks,training_batch_img_folder, training_batch_label_folder, number_of_batches ,patch_rows, patch_cols, patch_step, img_extension):
+def batch_patchCreateSave_v2(path_raw_img,path_masks,training_batch_img_folder, training_batch_label_folder, number_of_batches ,patch_rows, patch_cols, patch_step, img_extension, val_per):
         
     # List out the images in folder/ path
     img_files = glob.glob(os.path.join(path_raw_img,'*.' + img_extension))
