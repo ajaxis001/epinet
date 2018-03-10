@@ -114,7 +114,7 @@ for idx_b in range(batch_epochs):
                                               save_weights_to_path,
                                               load_weights_name)
         epinet.load_weights(load_weights_full_path) 
-        print('Loaded weights from patch batch : ' + str(idx-1)  ' in Training epochs : ' + str(idx_b-1)  ) 
+        print('Loaded weights from patch batch : ' + str(idx-1)  + ' in Training epochs : ' + str(idx_b-1)  ) 
 
     # test training using a single trdata and trlabel npy files 
     for idx in range(number_of_batches): 
