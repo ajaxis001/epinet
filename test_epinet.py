@@ -72,7 +72,7 @@ print('Loaded weights from : ', load_weights_full_path)
 
 for idx in range(1): # range(len(path_test_img)):
     tst_img = io.imread(tst_data_imgs[idx])
-    img_rows, img_cols,_ = test_img.shape
+    img_rows, img_cols,_ = tst_img.shape
 
     # init output predict patch 
     tst_out = np.zeros(img_rows,img_cols)    
