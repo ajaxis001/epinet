@@ -75,7 +75,7 @@ for idx in range(1): # range(len(path_test_img)):
     img_rows, img_cols,_ = tst_img.shape
 
     # init output predict patch 
-    tst_out = np.zeros(img_rows,img_cols)    
+    tst_out = np.zeros((img_rows,img_cols))    
 
     # Loop to corresponding test img patches
     # run loop as long as patches dont overstep the image boundaries along height or the width of the image
