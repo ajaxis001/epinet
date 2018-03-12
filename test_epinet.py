@@ -9,7 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt  
 
 from skimage import io
-
+from sklearn.preprocessing import scale
 
 from utilities_episeg import *
 from Models.unet_model1 import *
@@ -105,12 +105,12 @@ for idx in range(1): # range(len(path_test_img)):
                        
             im_patch = tst_img[ r_idx:r_idx+patch_rows, c_idx:c_idx+patch_cols, :]
             im_patch = im_patch[np.newaxis,:,:,:]
-            
+
             # getting predicted mask for patch
             im_patch_mask =  epinet.predict(im_patch)
             
             # Nothinf was done for the overlapping regions (NEED TO FIX THIS)
-            tst_out[ r_idx:r_idx+patch_rows, c_idx:c_idx+patch_cols] = im_patch_mask
+            tst_out[ r_idx:r_idx+patch_rows, c_idx:c_idx+patch_cols] = np.squeeze(im_patch_mask)
 
             if(c_idx + patch_cols == img_cols ):
                 col_edge = True    
@@ -124,8 +124,10 @@ for idx in range(1): # range(len(path_test_img)):
         r_k = r_k + 1   
     
 
+    tst_out = scale( tst_out, axis=0, with_mean=True, with_std=True, copy=True ) * 255
+
     tst_out = epinet.predict(tst_img)
-    io.imsave('test_out.tif', tst_out)
+    io.imsave('test_out.tif', tst_out.astype(np.uint8))
     io.imsave('test_img.tif', tst_img)
     
 
