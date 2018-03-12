@@ -127,7 +127,6 @@ for idx in range(1): # range(len(path_test_img)):
 
     tst_out = scale( tst_out, axis=0, with_mean=True, with_std=True, copy=True ) * 255
 
-    tst_out = epinet.predict(tst_img)
     io.imsave('test_out.tif', tst_out.astype(np.uint8))
     io.imsave('test_img.tif', tst_img)
     
