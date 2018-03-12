@@ -104,6 +104,7 @@ for idx in range(1): # range(len(path_test_img)):
                 col_edge = True
                        
             im_patch = tst_img[ r_idx:r_idx+patch_rows, c_idx:c_idx+patch_cols, :]
+            im_patch = im_patch[np.newaxis,:,:,:]
             
             # getting predicted mask for patch
             im_patch_mask =  epinet.predict(im_patch)
