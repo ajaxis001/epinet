@@ -111,6 +111,7 @@ for idx in range(1): # range(len(path_test_img)):
             
             # Nothinf was done for the overlapping regions (NEED TO FIX THIS)
             tst_out[ r_idx:r_idx+patch_rows, c_idx:c_idx+patch_cols] = np.squeeze(im_patch_mask)
+            print('\nPatch processed ')
 
             if(c_idx + patch_cols == img_cols ):
                 col_edge = True    
