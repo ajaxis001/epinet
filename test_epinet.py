@@ -72,6 +72,57 @@ print('Loaded weights from : ', load_weights_full_path)
 
 for idx in range(1): # range(len(path_test_img)):
     tst_img = io.imread(tst_data_imgs[idx])
+    img_rows, img_cols,_ = test_img.shape
+
+    # init output predict patch 
+    tst_out = np.zeros(img_rows,img_cols)    
+
+    # Loop to corresponding test img patches
+    # run loop as long as patches dont overstep the image boundaries along height or the width of the image
+    r_k = 0 # counter along width (rows)
+    row_edge = False
+        
+    while row_edge == False: # check if the patch along the rows has reached the edge of the image
+        r_idx = (r_k * patch_step) # the row number of the top left pixel in the image patch  
+        
+        # if edge patch along image heught overstepping img_height then pull it back so 
+        # that the edge patch just covers image 
+        if( r_idx + patch_rows > img_rows ):
+            r_idx = img_rows - patch_rows
+            row_edge = True
+        
+        c_k = 0 # counter along height (cols)
+        col_edge = False
+        
+        while col_edge == False:  # check if the patch along the columns has reached the edge of the image
+            c_idx = (c_k * patch_step)  # the column number of the top left pixel in the image patch 
+                    
+            # if edge patch along image width overstepping img_width then pull it back so 
+            # that the edge patch just covers image 
+            if( c_idx + patch_cols > img_cols ):
+                c_idx = img_cols - patch_cols
+                col_edge = True
+                       
+            im_patch = tst_img[ r_idx:r_idx+patch_rows, c_idx:c_idx+patch_cols, :]
+            
+            # getting predicted mask for patch
+            im_patch_mask =  epinet.predict(im_patch)
+            
+            # Nothinf was done for the overlapping regions (NEED TO FIX THIS)
+            tst_out[ r_idx:r_idx+patch_rows, c_idx:c_idx+patch_cols] = im_patch_mask
+
+            if(c_idx + patch_cols == img_cols ):
+                col_edge = True    
+                
+            c_k = c_k + 1
+            
+                
+        if(r_idx + patch_rows == img_rows ):
+            row_edge = True    
+            
+        r_k = r_k + 1   
+    
+
     tst_out = epinet.predict(tst_img)
     io.imsave('test_out.tif', tst_out)
     io.imsave('test_img.tif', tst_img)
