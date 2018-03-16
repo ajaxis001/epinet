@@ -8,7 +8,7 @@ Created on Thu Mar  1 21:30:18 2018
 import os
 import sys
 #import glob2 as glob
-import glob as glob
+import glob2 as glob
 import re
 import pprint
 
@@ -39,7 +39,7 @@ models_folder = 'Model_runs'
 makefolder_ifnotexists(os.path.join(dirname, 
                                     models_folder))
 
-suite_dirname = 'model1_run1'
+suite_dirname = 'model1_run3_batchv2'
 # suite_dirname = input('\nEnter name for this run of model: ')
 makefolder_ifnotexists(os.path.join(dirname, 
                                     models_folder, 
@@ -50,21 +50,23 @@ patch_rows = 256
 patch_cols = 256
 patch_step = 100 # The number of pixels between start of one patch and the start of the succeeding patch
 
+# The number of batches (this should be same as the last number on your training data/label folder)
+number_of_batches = 20
 
 # Setting folders to load the batches of .npy files that will be used
-training_batch_img_folder = os.path.join('Train_batches','images_'+ str(patch_rows) + '_' + str(patch_step) + '_*') 
-training_batch_label_folder = os.path.join('Train_batches','labels_'+ str(patch_rows) + '_' + str(patch_step) + '_*' ) 
+training_batch_img_folder = os.path.join('Train_batches','images_'+ str(patch_rows) + '_' + str(patch_step) + '_'  + str(number_of_batches)) 
+training_batch_label_folder = os.path.join('Train_batches','labels_'+ str(patch_rows) + '_' + str(patch_step) +  '_' + str(number_of_batches) ) 
 
-
-# The batches of training data
-tr_data_batches = sorted(glob.glob(os.path.join(dirname, training_batch_img_folder, '*.npy')), 
+# The batches of training data w.r.t to time so that each data batch has the right label batch
+tr_data_batches = sorted(glob.glob(os.path.join(dirname, training_batch_img_folder, 'tr_data_batch_*.npy')), 
                          key=os.path.getmtime)
-tr_label_batches = sorted(glob.glob(os.path.join(dirname, training_batch_label_folder, '*.npy')),
+tr_label_batches = sorted(glob.glob(os.path.join(dirname, training_batch_label_folder, 'tr_label_batch_*.npy')),
                           key=os.path.getmtime)
 pprint.pprint(tr_data_batches)
 pprint.pprint(tr_label_batches)
 
 
+quit()
 # Parameters
 loss='binary_crossentropy'
 optimizer='adam'
