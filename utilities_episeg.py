@@ -211,8 +211,10 @@ otherwise the data patches and mask patches will be shuffled in different ways.
 INPUTS:
 path_raw_img - path to the images 
 path_masks - path to masks
-training_batch_img_folder - Location to store the data patch batches 
-training_batch_label_folder - Location to store the mask/label patch batches 
+training_batch_img_folder - Location to store the training data patch batches 
+training_batch_label_folder - Location to store the training mask/label patch batches 
+validation_batch_img_folder - Location to store the validation data patch batches 
+validation_batch_label_folder - Location to store the validationmask/label patch batches 
 patch_rows - number of rows  in patch
 patch_cols - number of columns in patch
 patch_step - steps to take inbetween patches
@@ -222,12 +224,22 @@ OUTPUTS:
 
         
 ''' 
-def batch_patchCreateSave_v2(path_raw_img,path_masks,training_batch_img_folder, training_batch_label_folder, number_of_batches ,patch_rows, patch_cols, patch_step, img_extension, val_per):
-        
+def batch_patchCreateSave_v2(path_raw_img, path_masks,
+                             training_batch_img_folder, training_batch_label_folder, 
+                             validation_batch_img_folder, validation_batch_label_folder, 
+                             number_of_batches,
+                             patch_rows, patch_cols, patch_step, 
+                             img_extension, 
+                             val_per):
+    
+      
     # List out the images in folder/ path
     img_files = glob.glob(os.path.join(path_raw_img,'*.' + img_extension))
-    random.shuffle(img_files)
-        
+    
+    val_size = int(val_per * len(img_files))
+    
+    
+    
     mask_suffix = '_mask' # add extension to image name to get corresponding mask file name
     
               
@@ -264,20 +276,32 @@ def batch_patchCreateSave_v2(path_raw_img,path_masks,training_batch_img_folder, 
         epi_patch_arr = np.concatenate((epi_patch_arr,data_patches), axis = 0)
         mask_patch_arr = np.concatenate((mask_patch_arr,mask_patches), axis = 0)
         
-    # Removing the the very first patch which was just used for initializing the dynamically increasing patch arrays
+    # Removing the the very first patch which was just used for initializing 
+    # the dynamically increasing patch arrays
     epi_patch_arr = epi_patch_arr[1:,...] 
     np.random.shuffle(epi_patch_arr)
-
+    
     mask_patch_arr = mask_patch_arr[1:,...]
-    np.random.shuffle(mask_patch_arr)
+    np.random.shuffle(mask_patch_arr)    
+    
+    # Seperating training and validation data-mask pairs
+    val_epi_patch_arr = epi_patch_arr[:val_size,...]
+    epi_patch_arr = epi_patch_arr[val_size:,...]      
+    
+    val_mask_patch_arr = mask_patch_arr[:val_size,...]
+    mask_patch_arr = mask_patch_arr[val_size:,...]
 
     print('Train data shape : ' , str(epi_patch_arr.shape))
     print('Train labels shape : ' , str(mask_patch_arr.shape))   
-
+    
+    print('Validation data shape : ' , str(val_epi_patch_arr.shape))
+    print('Validation labels shape : ' , str(val_mask_patch_arr.shape))   
+    
 
     # Number of patches in a single batch
     num_patches_in_batch = int(epi_patch_arr.shape[0]/number_of_batches)
 
+    # Creating training patch batches and saving them
     for idx in np.r_[0 : epi_patch_arr.shape[0] : number_of_batches]:
         print('\nProcessing batch ' + str(idx) + ' of ' + str(number_of_batches-1))
 
@@ -290,7 +314,11 @@ def batch_patchCreateSave_v2(path_raw_img,path_masks,training_batch_img_folder, 
         np.save(os.path.join( training_batch_img_folder ,'tr_data_batch_' + str(idx) + '.npy'), epi_patch_batch)
         np.save(os.path.join(training_batch_label_folder ,'tr_label_batch_'+ str(idx) +  '.npy'), mask_patch_batch)
 
-
+    # Storing validation data
+    np.save(os.path.join(validation_batch_img_folder, 'val_data_batch_' + str(val_per) + '.npy'), val_epi_patch_arr)
+    np.save(os.path.join(validation_batch_label_folder, 'val_mask_batch_' + str(val_per) + '.npy'), val_mask_patch_arr)
+    
+   
 
 '''--------------------------------------------------------------------------------------------
 Function takes in the parameters given below and readies the data to be input to given into the 
