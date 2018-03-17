@@ -245,7 +245,7 @@ def batch_patchCreateSave_v2(path_raw_img, path_masks,
     
     # Testing whether images exist in the given folder/ folder exists          
     test_img = img_files[0]
-    assert (not test_img) , "Error : Images do not exist, check image folder "
+    assert (test_img) , "Error : Images do not exist, check image folder "
 
     _,_,img_channels = np.shape(io.imread(img_files[0])) # Getting number of channels in training images
     
