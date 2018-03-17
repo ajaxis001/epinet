@@ -242,7 +242,11 @@ def batch_patchCreateSave_v2(path_raw_img, path_masks,
     
     mask_suffix = '_mask' # add extension to image name to get corresponding mask file name
     
-              
+    
+    # Testing whether images exist in the given folder/ folder exists          
+    test_img = img_files[0]
+    assert (not test_img) , "Error : Images do not exist, check image folder "
+
     _,_,img_channels = np.shape(io.imread(img_files[0])) # Getting number of channels in training images
     
     # init first patches because we dont know what the number of patches for a single batch is going to be,
@@ -264,11 +268,6 @@ def batch_patchCreateSave_v2(path_raw_img, path_masks,
         
         if mask is None:
             print('\nErr 0 : Corresponding mask file missing.\n')
-        # print(img_files[idx])
-        # print(mask_file + '\n')
-        # img_arr = io.imread('imagetest.jpg')
-        # print(type(img_arr)) #: <class 'numpy.ndarray'>
-        # io.imshow(img_arr) # disp imge
         
         data_patches = create_patch_arr(img, patch_rows,patch_cols,patch_step)
         mask_patches = create_patch_arr(mask, patch_rows,patch_cols,patch_step)
@@ -286,9 +285,9 @@ def batch_patchCreateSave_v2(path_raw_img, path_masks,
     
     # Seperating training and validation data-mask pairs
     val_epi_patch_arr = epi_patch_arr[:val_size,...]
-    epi_patch_arr = epi_patch_arr[val_size:,...]      
-    
     val_mask_patch_arr = mask_patch_arr[:val_size,...]
+
+    epi_patch_arr = epi_patch_arr[val_size:,...]     
     mask_patch_arr = mask_patch_arr[val_size:,...]
 
     print('Train data shape : ' , str(epi_patch_arr.shape))
@@ -301,6 +300,8 @@ def batch_patchCreateSave_v2(path_raw_img, path_masks,
     # Number of patches in a single batch
     num_patches_in_batch = int(epi_patch_arr.shape[0]/number_of_batches)
 
+
+    cntr = 0
     # Creating training patch batches and saving them
     for idx in np.r_[0 : epi_patch_arr.shape[0] : number_of_batches]:
         print('\nProcessing batch ' + str(idx) + ' of ' + str(number_of_batches-1))
@@ -311,13 +312,16 @@ def batch_patchCreateSave_v2(path_raw_img, path_masks,
         print('\tSize of current data batch : ', str(epi_patch_batch.shape))
         print('\tSize of current mask batch : ', str(mask_patch_batch.shape))
 
-        np.save(os.path.join( training_batch_img_folder ,'tr_data_batch_' + str(idx) + '.npy'), epi_patch_batch)
-        np.save(os.path.join(training_batch_label_folder ,'tr_label_batch_'+ str(idx) +  '.npy'), mask_patch_batch)
+        np.save(os.path.join( training_batch_img_folder ,'tr_data_batch_' + str(cntr) + '.npy'), epi_patch_batch)
+        np.save(os.path.join(training_batch_label_folder ,'tr_label_batch_'+ str(cntr) +  '.npy'), mask_patch_batch)
+        cntr = cntr + 1
+
+    print("\nTraining Data/Labels batches processed")
 
     # Storing validation data
     np.save(os.path.join(validation_batch_img_folder, 'val_data_batch_' + str(val_per) + '.npy'), val_epi_patch_arr)
     np.save(os.path.join(validation_batch_label_folder, 'val_mask_batch_' + str(val_per) + '.npy'), val_mask_patch_arr)
-    
+    print("\nValidation Data/Labels processed")
    
 
 '''--------------------------------------------------------------------------------------------
