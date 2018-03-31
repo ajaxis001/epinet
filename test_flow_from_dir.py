@@ -49,7 +49,7 @@ seed = 1
 
 # Defining random_crop() to do random cropping to get patches randomly from data 
 def random_crop(x):
-	random_crop_size = ()
+    random_crop_size = ()
     np.random.seed(seed)
     rows, cols = x.shape[1], x.shape[2]
     range_rows = (rows - random_crop_size[0]) // 2
@@ -58,7 +58,7 @@ def random_crop(x):
     offset_cols = 0 if range_cols == 0 else np.random.randint(range_cols)
     return x[:, offset_rows:offset_rows+random_crop_size[0], offset_cols:offset_cols+random_crop_size[1]]
 
-data_gen_args = dict(preprocessing=random_crop)
+data_gen_args = dict(preprocessing_function=random_crop)
 image_datagen = ImageDataGenerator(**data_gen_args)
 mask_datagen = ImageDataGenerator(**data_gen_args)
 
