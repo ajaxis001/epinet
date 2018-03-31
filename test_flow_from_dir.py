@@ -17,6 +17,8 @@ from utilities_episeg import *
 
 dirname = os.path.dirname(__file__)
 
+sync_seed = 10
+
 # Specifying paths (with the epithelium images and the segmentation mask images)
 path_raw_img = os.path.join('Images50','Images')# the raw images (same resolutiona as the svs)
 path_masks = os.path.join('Images50','Mask') # the segmentation mask
@@ -45,25 +47,22 @@ pprint(mask_files)
 
 seed = 1
 
-data_gen_args = dict()
+# Defining random_crop() to do random cropping to get patches randomly from data 
+def random_crop(x):
+	random_crop_size = ()
+    np.random.seed(seed)
+    rows, cols = x.shape[1], x.shape[2]
+    range_rows = (rows - random_crop_size[0]) // 2
+    range_cols = (cols - random_crop_size[1]) // 2
+    offset_rows = 0 if range_rows == 0 else np.random.randint(range_rows)
+    offset_cols = 0 if range_cols == 0 else np.random.randint(range_cols)
+    return x[:, offset_rows:offset_rows+random_crop_size[0], offset_cols:offset_cols+random_crop_size[1]]
+
+data_gen_args = dict(preprocessing=random_crop)
 image_datagen = ImageDataGenerator(**data_gen_args)
 mask_datagen = ImageDataGenerator(**data_gen_args)
 
-# Defining random_crop() to do random cropping to get patches randomly from data 
-def random_crop(x, random_crop_size, sync_seed=None, **kwargs):
-    np.random.seed(sync_seed)
-    w, h = x.shape[1], x.shape[2]
-    rangew = (w - random_crop_size[0]) // 2
-    rangeh = (h - random_crop_size[1]) // 2
-    offsetw = 0 if rangew == 0 else np.random.randint(rangew)
-    offseth = 0 if rangeh == 0 else np.random.randint(rangeh)
-    return x[:, offsetw:offsetw+random_crop_size[0], offseth:offseth+random_crop_size[1]]
 
-image_datagen.config['random_crop_size'] = (patch_rows, patch_cols)
-mask_datagen.config['random_crop_size'] = (patch_rows, patch_cols)
-
-image_datagen.set_pipeline([random_crop])
-mask_datagen.set_pipeline([random_crop])
 
 
 # -------------------------------- For Mask------------------------------------
