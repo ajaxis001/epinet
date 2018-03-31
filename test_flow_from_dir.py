@@ -35,12 +35,12 @@ patch_step = 100 # sets the number of pixels between start of one patch and the 
 # Extension for the images
 img_extension = 'tif'
 
-img_files = glob.glob(os.path.join(path_raw_img, '*.*'))
-mask_files = glob.glob(os.path.join(path_masks, '*.*'))
+# img_files = glob.glob(os.path.join(path_raw_img,'epi_imgs', '*.*'))
+# mask_files = glob.glob(os.path.join(path_masks, 'mask_imgs','*.*'))
 
-pprint(img_files)
-print(30*'=')
-pprint(mask_files)
+# pprint(img_files)
+# print(30*'=')
+# pprint(mask_files)
 
 
 #======================================== Actual Testing of flow_from_directory() ========================================
@@ -49,14 +49,23 @@ seed = 1
 
 # Defining random_crop() to do random cropping to get patches randomly from data 
 def random_crop(x):
-    random_crop_size = (256,256)
+    crop_size = (256,256)
     np.random.seed(seed)
-    rows, cols = x.shape[1], x.shape[2]
-    range_rows = (rows - random_crop_size[0]) // 2
-    range_cols = (cols - random_crop_size[1]) // 2
-    offset_rows = 0 if range_rows == 0 else np.random.randint(range_rows)
-    offset_cols = 0 if range_cols == 0 else np.random.randint(range_cols)
-    return x[:, offset_rows:offset_rows+random_crop_size[0], offset_cols:offset_cols+random_crop_size[1]]
+    print('x.shape', x.shape)
+    rows, cols = x.shape[0], x.shape[1]
+    print('img rows : ', rows)
+    print('img cols : ', cols)
+    
+    range_rows = (rows - crop_size[0]) 
+    range_cols = (cols - crop_size[1]) 
+    offset_rows = 0 if range_rows == 0 else np.random.randint(0,int(range_rows))
+    offset_cols = 0 if range_cols == 0 else np.random.randint(0,int(range_cols))
+    print('range_rows : ',range_rows)
+    print('range_cols : ',range_cols)
+    
+    # io.imsave('test' + str(seed) + '.jpeg', x[offset_rows:offset_rows+crop_size[0], offset_cols:offset_cols+crop_size[1],:])
+    return x[offset_rows:offset_rows+crop_size[0], offset_cols:offset_cols+crop_size[1],:]
+
 
 data_gen_args = dict(preprocessing_function=random_crop)
 image_datagen = ImageDataGenerator(**data_gen_args)
@@ -68,7 +77,6 @@ mask_datagen = ImageDataGenerator(**data_gen_args)
 # -------------------------------- For Mask------------------------------------
 i = 0
 img_flow = image_datagen.flow_from_directory(path_raw_img, 
-		                            target_size=(patch_rows,patch_cols),
 		                            batch_size=10,
 		                            class_mode=None,
 		                            save_to_dir='preview_ffd',
@@ -81,7 +89,6 @@ x_batch = next(img_flow)
 # -------------------------------- For Mask------------------------------------
 i = 0
 mask_flow = mask_datagen.flow_from_directory(path_masks, 
-	                                target_size=(patch_rows,patch_cols),
 	                                batch_size=10,
 	                                class_mode=None,
 	                                save_to_dir='preview_ffd',
