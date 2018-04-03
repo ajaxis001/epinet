@@ -48,10 +48,14 @@ img_extension = 'tif'
 seed = 1
 
 # Defining random_crop() to do random cropping to get patches randomly from data 
-def random_crop(x):
-    crop_size = (256,256)
+def random_crop(x, **funcvars):
+    crop_size = funcvars.pop('crop_size', None)
+    if crop_size is None:
+        raise ValueError(r'Required variable >crop_size< not defined')
     np.random.seed(seed)
+
     print('x.shape', x.shape)
+    
     rows, cols = x.shape[0], x.shape[1]
     print('img rows : ', rows)
     print('img cols : ', cols)
@@ -66,8 +70,14 @@ def random_crop(x):
     # io.imsave('test' + str(seed) + '.jpeg', x[offset_rows:offset_rows+crop_size[0], offset_cols:offset_cols+crop_size[1],:])
     return x[offset_rows:offset_rows+crop_size[0], offset_cols:offset_cols+crop_size[1],:]
 
+crop_size = (patch_rows, patch_cols)
+preprocessing_vars = {}
+preprocessing_vars['crop_size'] = crop_size
 
-data_gen_args = dict(preprocessing_function=random_crop)
+preprocess_on_image_before_autoresize=True
+data_gen_args = dict(preprocessing_function=random_crop, 
+					 preprocessing_vars=preprocessing_vars, 
+					 preprocess_on_image_before_autoresize=preprocess_on_image_before_autoresize)
 image_datagen = ImageDataGenerator(**data_gen_args)
 mask_datagen = ImageDataGenerator(**data_gen_args)
 
