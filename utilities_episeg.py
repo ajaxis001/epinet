@@ -365,3 +365,35 @@ def ready_data(path_to_data, path_to_label, mode):
     print('processing data...')
 
     return processed_data
+
+
+
+# Defining random_crop() to do random cropping to get patches randomly from data 
+# This function is built specifically to work with the keras image datagenerator
+# that I modified 
+def random_crop(x, **funcvars):
+    crop_size = funcvars.pop('crop_size', None)
+    seed = funcvars.pop('seed', None)
+    if crop_size is None:
+        raise ValueError(r'Required variable >crop_size< not defined')
+    if seed is None:
+        raise ValueError(r'Required variable >seed< not defined')
+    
+
+    np.random.seed(seed)
+
+    #print('x.shape', x.shape)
+    
+    rows, cols = x.shape[0], x.shape[1]
+    # print('img rows : ', rows)
+    # print('img cols : ', cols)
+    
+    range_rows = (rows - crop_size[0]) 
+    range_cols = (cols - crop_size[1]) 
+    offset_rows = 0 if range_rows == 0 else np.random.randint(0,int(range_rows))
+    offset_cols = 0 if range_cols == 0 else np.random.randint(0,int(range_cols))
+    # print('range_rows : ',range_rows)
+    # print('range_cols : ',range_cols)
+    
+    # io.imsave('test' + str(seed) + '.jpeg', x[offset_rows:offset_rows+crop_size[0], offset_cols:offset_cols+crop_size[1],:])
+    return x[offset_rows:offset_rows+crop_size[0], offset_cols:offset_cols+crop_size[1],:]
