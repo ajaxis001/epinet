@@ -19,6 +19,8 @@ from skimage import io
 from sklearn.model_selection import train_test_split
 from keras.callbacks import CSVLogger, EarlyStopping, ModelCheckpoint
 from keras.utils import to_categorical, normalize
+from keras.preprocessing.image import ImageDataGenerator
+
 
 from utilities_episeg import *
 from Models.unet_model1 import *
