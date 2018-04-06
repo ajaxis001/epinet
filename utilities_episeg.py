@@ -298,8 +298,9 @@ def batch_patchCreateSave_v2(path_raw_img, path_masks,
     
 
     # Number of patches in a single batch
-    num_patches_in_batch = int(epi_patch_arr.shape[0]/number_of_batches)
-
+    if number_of_batches > 0:
+        num_patches_in_batch = int(epi_patch_arr.shape[0]/number_of_batches)
+    
 
     cntr = 0
     # Creating training patch batches and saving them
