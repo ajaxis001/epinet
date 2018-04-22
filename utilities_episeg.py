@@ -373,17 +373,15 @@ def ready_data(path_to_data, path_to_label, mode):
 # that I modified 
 def random_crop(x, **funcvars):
     crop_size = funcvars.pop('crop_size', None)
-    seed = funcvars.pop('seed', None)
+    # seed = funcvars.pop('seed', None)
+    mode = funcvars.pop('mode',None)
     if crop_size is None:
         raise ValueError(r'Required variable >crop_size< not defined')
-    if seed is None:
-        raise ValueError(r'Required variable >seed< not defined')
-    
-
-    np.random.seed(seed)
+    # if seed is None:
+    #     raise ValueError(r'Required variable >seed< not defined')
+     # np.random.seed(seed)
 
     #print('x.shape', x.shape)
-    
     rows, cols = x.shape[0], x.shape[1]
     # print('img rows : ', rows)
     # print('img cols : ', cols)
@@ -396,4 +394,7 @@ def random_crop(x, **funcvars):
     # print('range_cols : ',range_cols)
     
     # io.imsave('test' + str(seed) + '.jpeg', x[offset_rows:offset_rows+crop_size[0], offset_cols:offset_cols+crop_size[1],:])
-    return x[offset_rows:offset_rows+crop_size[0], offset_cols:offset_cols+crop_size[1],:]
+    if mode == 'mask':
+        return x[offset_rows:offset_rows+crop_size[0], offset_cols:offset_cols+crop_size[1],:] > 0
+    else:
+        return x[offset_rows:offset_rows+crop_size[0], offset_cols:offset_cols+crop_size[1],:]
