@@ -46,7 +46,7 @@ models_folder = 'Model_runs'
 makefolder_ifnotexists(os.path.join(dirname, 
                                     models_folder))
 
-suite_dirname = 'model1_run4_batchv2'
+suite_dirname = 'model1_run5_batchv2'
 # suite_dirname = input('\nEnter name for this run of model: ')
 makefolder_ifnotexists(os.path.join(dirname, 
                                     models_folder, 
@@ -57,8 +57,8 @@ patch_rows = 256
 patch_cols = 256
 patch_step = 100 # The number of pixels between start of one patch and the start of the succeeding patch
 
-# The number of batches (this should be same as the last number on your training data/label folder)
-number_of_batches = 20
+# # The number of batches (this should be same as the last number on your training data/label folder)
+# number_of_batches = 20
 
 # Setting folders to load the batches of .npy files that will be used
 val_batch_img_folder = os.path.join('Val_batches','images_'+ str(patch_rows) + '_' + str(patch_step)) 
@@ -79,9 +79,10 @@ pprint.pprint(val_label_batches)
 
 # Parameters
 loss='binary_crossentropy'
-optimizer='adam'
-batch_size = 5
-epochs = 200
+optimizer='Nadam'
+batch_size = 32
+steps_per_epoch = 10
+epochs = 100
 verbose_in_fit = 1
 early_stopping_patience = 30
 
@@ -118,8 +119,8 @@ num_val_patches, img_rows, img_cols, img_channels = X_val.shape
 
 # Declaring the model
 my_model = unet_model1(img_rows=img_rows,
-                             img_cols=img_cols,
-                             img_channels=img_channels)
+                       img_cols=img_cols,
+                       img_channels=img_channels)
 epinet = my_model.get_model()
 
 # Compile model
@@ -133,20 +134,20 @@ epinet.summary()
 # Save the model accuracy and loss
 log_name = 'model.log'
 log_full_path = os.path.join(dirname,
-                         models_folder,
-                         suite_dirname, 
-                         log_path, 
-                         log_name)
+                             models_folder,
+                             suite_dirname, 
+                             log_path, 
+                             log_name)
 csv_logger_call = CSVLogger(log_full_path)
 
 
 # Save model for testing purposes
 save_weights_name =   'model_weights.h5'
 save_weights_full_path = os.path.join(dirname,
-                                  models_folder,
-                                  suite_dirname,
-                                  save_weights_to_path,
-                                  save_weights_name)
+                                      models_folder,
+                                      suite_dirname,
+                                      save_weights_to_path,
+                                      save_weights_name)
 
 model_chkpt_call = ModelCheckpoint(save_weights_full_path,
                                    monitor='val_acc',
@@ -159,33 +160,42 @@ early_stopping = EarlyStopping(monitor='val_loss',
 
 # Setting up image generator
 crop_size = (patch_rows, patch_cols)
-preprocessing_vars = {}
-preprocessing_vars['crop_size'] = crop_size
-preprocessing_vars['seed'] = seed
+data_preprocessing_vars = {}
+data_preprocessing_vars['crop_size'] = crop_size
+# preprocessing_vars['seed'] = seed
 
 preprocess_on_image_before_autoresize=True
 data_gen_args = dict(preprocessing_function=random_crop, 
-					 preprocessing_vars=preprocessing_vars, 
-					 preprocess_on_image_before_autoresize=preprocess_on_image_before_autoresize)
+          					 preprocessing_vars=data_preprocessing_vars, 
+          					 preprocess_on_image_before_autoresize=preprocess_on_image_before_autoresize)
 image_datagen = ImageDataGenerator(**data_gen_args)
-mask_datagen = ImageDataGenerator(**data_gen_args)
 
-image_generator = image_datagen.flow_from_directory(
-    path_raw_img,
-    class_mode=None,
-    seed=seed)
+mask_preprocessing_vars = {}
+mask_preprocessing_vars['crop_size'] = crop_size
+mask_preprocessing_vars['mode'] = 'mask'
+mask_gen_args = dict(preprocessing_function=random_crop, 
+                     preprocessing_vars=mask_preprocessing_vars, 
+                     preprocess_on_image_before_autoresize=preprocess_on_image_before_autoresize)
+mask_datagen = ImageDataGenerator(**mask_gen_args)
 
-mask_generator = mask_datagen.flow_from_directory(
-    path_masks,
-    class_mode=None,
-    seed=seed)
+
+image_generator = image_datagen.flow_from_directory(path_raw_img,
+                                                    batch_size=batch_size,
+                                                    class_mode=None,
+                                                    seed=seed)
+
+mask_generator = mask_datagen.flow_from_directory(path_masks,
+                                                  color_mode='grayscale',
+                                                  batch_size=batch_size,
+                                                  class_mode=None,
+                                                  seed=seed)
 
 train_generator = zip(image_generator, mask_generator)
 
 # Train model
 epinet.fit_generator(train_generator,
-              batch_size=batch_size,
               epochs=epochs,
+              steps_per_epoch=steps_per_epoch,
               verbose=verbose_in_fit,
               callbacks=[csv_logger_call, model_chkpt_call, early_stopping],
               validation_data=(X_val, y_val))
